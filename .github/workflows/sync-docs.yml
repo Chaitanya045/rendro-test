@@ -1,0 +1,98 @@
+name: Sync Docs to Rendro
+
+on:
+  push:
+    branches: [main]
+    paths: ['docs/**']
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sync docs to Rendro
+        env:
+          RENDRO_API_KEY: ${{ secrets.RENDRO_API_KEY }}
+          RENDRO_ENDPOINT: https://rendro.app
+          RENDRO_ORG: gmail
+        run: |
+          set -euo pipefail
+
+          ENDPOINT="${RENRO_ENDPOINT:-https://rendro.app}"
+          ORG="${RENRO_ORG:?RENRO_ORG is required}"
+          DOCS_DIR="${1:-./docs}"
+
+          echo "→ Syncing $DOCS_DIR to $ENDPOINT (org: $ORG)"
+
+          # Verify API key and get authorized org
+          AUTH_ORG=$(curl -sf "$ENDPOINT/api/sync/list" \
+            -H "Authorization: Bearer $RENRO_API_KEY" \
+            | python3 -c "import sys; print('ok')" 2>/dev/null || echo "fail")
+
+          if [ "$AUTH_ORG" != "ok" ]; then
+            echo "✗ API key invalid or unauthorized"
+            exit 1
+          fi
+
+          echo "✓ API key valid"
+
+          # Get existing files from server
+          EXISTING=$(curl -sf "$ENDPOINT/api/sync/list" \
+            -H "Authorization: Bearer $RENRO_API_KEY" \
+            | python3 -c "import json,sys; d=json.load(sys.stdin); print('\n'.join(d.get('keys',[])))" 2>/dev/null || echo "")
+
+          UPLOADED=0
+          SKIPPED=0
+
+          # Walk docs directory and upload each .html file
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            # Convert local path to R2 key: docs/index.html → gmail/index.html
+            rel="${file#$DOCS_DIR/}"
+            key="$ORG/$rel"
+
+            # Hash for comparison
+            hash=$(md5sum "$file" | cut -d' ' -f1)
+
+            # Check if file exists on server with same hash
+            check=$(curl -sf "$ENDPOINT/api/sync/check?key=$key&hash=$hash" \
+              -H "Authorization: Bearer $RENRO_API_KEY" 2>/dev/null || echo '{"exists":false}')
+
+            match=$(echo "$check" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('match', False))" 2>/dev/null || echo "False")
+
+            if [ "$match" = "True" ]; then
+              SKIPPED=$((SKIPPED + 1))
+              continue
+            fi
+
+            # Upload
+            content=$(cat "$file")
+            curl -sf "$ENDPOINT/api/sync/upload" \
+              -H "Authorization: Bearer $RENRO_API_KEY" \
+              -H "Content-Type: application/json" \
+              -d "{\"key\": \"$key\", \"content\": $(echo "$content" | python3 -c "import json,sys; print(json.dumps(sys.stdin.read()))")}" \
+              > /dev/null
+
+            echo "  ↑ $rel"
+            UPLOADED=$((UPLOADED + 1))
+          done < <(find "$DOCS_DIR" -name '*.html' -type f | sort)
+
+          # Soft-delete files that exist on server but not locally
+          DELETED=0
+          if [ -n "$EXISTING" ]; then
+            while IFS= read -r server_key; do
+              [ -z "$server_key" ] && continue
+              rel="${server_key#$ORG/}"
+              if [ ! -f "$DOCS_DIR/$rel" ]; then
+                curl -sf -X DELETE "$ENDPOINT/api/sync/delete?key=$server_key" \
+                  -H "Authorization: Bearer $RENRO_API_KEY" > /dev/null 2>&1
+                echo "  ✗ $rel (deleted)"
+                DELETED=$((DELETED + 1))
+              fi
+            done <<< "$EXISTING"
+          fi
+
+          echo ""
+          echo "✓ Sync complete: $UPLOADED uploaded, $SKIPPED unchanged, $DELETED deleted"
