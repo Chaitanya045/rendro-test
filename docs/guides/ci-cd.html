@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Quickstart Guide — Rendro Docs</title>
+<title>CI/CD Setup — Rendro Docs</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -34,30 +34,30 @@
 </style>
 </head>
 <body>
-<div class="breadcrumb"><a href="../index.html">Home</a> / <a href="../getting-started/">Getting Started</a> / <a href="">Quickstart Guide</a></div>
-<h1>Quickstart Guide</h1>
+<div class="breadcrumb"><a href="../index.html">Home</a> / <a href="../guides/">Guides</a> / <a href="">CI/CD Setup</a></div>
+<h1>CI/CD Setup</h1>
 
-<h2>Prerequisites</h2>
-<p>Before you begin, ensure you have <strong>Node.js 18+</strong> installed. Rendro's CLI is built on Node.js and requires no additional runtime dependencies.</p>
-<p>You'll also need a <strong>Google account</strong> to sign in to the Rendro web interface. Authentication is handled via Google OAuth with organization-level isolation.</p>
-<h2>Installation</h2>
-<p>Install the Rendro CLI globally using npm. The CLI is a zero-dependency Node.js script — it downloads instantly and works on any platform.</p>
-<pre><code>npm install -g rendro
+<h2>GitHub Actions</h2>
+<p>The recommended CI/CD setup uses GitHub Actions with a simple curl-based script. Store your Rendro API key as a repository secret (<code>RENDRO_API_KEY</code>) and create a workflow that runs on push to main.</p>
+<pre><code>name: Sync Docs
+on:
+  push:
+    branches: [main]
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sync
+        env:
+          RENDRO_API_KEY: ${{ secrets.RENDRO_API_KEY }}
+        run: |
+          # Use the Rendro sync script
+          npx rendro push --source ./docs --org my-org</code></pre><h2>GitLab CI</h2>
+<p>For GitLab, use a similar approach with the GitLab CI pipeline. Store the API key as a CI/CD variable and add a job that runs on merge to main.</p>
+<h2>Manual Sync</h2>
+<p>For teams without CI/CD, the CLI can be run manually or via a pre-commit hook. The hash-based diffing ensures manual syncs are fast, even for large doc sets.</p>
 
-# Verify installation
-rendro --help</code></pre><h2>First Push</h2>
-<p>Create a <code>docs/</code> directory in your project and add an HTML file. Then push it to your organization:</p>
-<pre><code>mkdir -p docs
-echo "<h1>Hello World</h1>" > docs/index.html
-
-# Set your API key (from the Rendro dashboard)
-export RENDRO_API_KEY=rendro_xxx
-
-# Push!
-rendro push --source ./docs --org my-org</code></pre><h2>Next Steps</h2>
-<p>After your first push, visit the Rendro web interface and sign in with Google. You'll see your organization's docs in the sidebar tree. Click any file to view it, or expand folders to navigate.</p>
-<p>Set up a GitHub Actions workflow to automatically push docs on every commit. This ensures your documentation stays in sync with your codebase without manual intervention.</p>
-
-<div class="meta">Last updated: July 2026 · Getting Started</div>
+<div class="meta">Last updated: July 2026 · Guides</div>
 </body>
 </html>

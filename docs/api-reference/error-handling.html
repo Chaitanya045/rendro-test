@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Quickstart Guide — Rendro Docs</title>
+<title>Error Handling — Rendro Docs</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -34,30 +34,19 @@
 </style>
 </head>
 <body>
-<div class="breadcrumb"><a href="../index.html">Home</a> / <a href="../getting-started/">Getting Started</a> / <a href="">Quickstart Guide</a></div>
-<h1>Quickstart Guide</h1>
+<div class="breadcrumb"><a href="../index.html">Home</a> / <a href="../api-reference/">API Reference</a> / <a href="">Error Handling</a></div>
+<h1>Error Handling</h1>
 
-<h2>Prerequisites</h2>
-<p>Before you begin, ensure you have <strong>Node.js 18+</strong> installed. Rendro's CLI is built on Node.js and requires no additional runtime dependencies.</p>
-<p>You'll also need a <strong>Google account</strong> to sign in to the Rendro web interface. Authentication is handled via Google OAuth with organization-level isolation.</p>
-<h2>Installation</h2>
-<p>Install the Rendro CLI globally using npm. The CLI is a zero-dependency Node.js script — it downloads instantly and works on any platform.</p>
-<pre><code>npm install -g rendro
+<h2>Overview</h2>
+<p>This page covers error handling in the Rendro documentation platform. For more details, see the related sections in the sidebar.</p>
+<p>The api reference section provides comprehensive information about configuring, using, and extending Rendro for your team's documentation needs.</p>
+<h2>Configuration</h2>
+<p>Configure error handling through environment variables or the Rendro configuration file. All settings are optional with sensible defaults.</p>
+<pre><code># Example configuration for error-handling
+export RENDRO_ERROR_HANDLING_ENABLED=true</code></pre><h2>Best Practices</h2>
+<p>When working with error handling, follow these guidelines to ensure optimal performance and maintainability.</p>
+<p><ul><li>Always test changes in a staging environment first</li><li>Document your configuration choices for team members</li><li>Monitor for changes in behavior after updates</li></ul></p>
 
-# Verify installation
-rendro --help</code></pre><h2>First Push</h2>
-<p>Create a <code>docs/</code> directory in your project and add an HTML file. Then push it to your organization:</p>
-<pre><code>mkdir -p docs
-echo "<h1>Hello World</h1>" > docs/index.html
-
-# Set your API key (from the Rendro dashboard)
-export RENDRO_API_KEY=rendro_xxx
-
-# Push!
-rendro push --source ./docs --org my-org</code></pre><h2>Next Steps</h2>
-<p>After your first push, visit the Rendro web interface and sign in with Google. You'll see your organization's docs in the sidebar tree. Click any file to view it, or expand folders to navigate.</p>
-<p>Set up a GitHub Actions workflow to automatically push docs on every commit. This ensures your documentation stays in sync with your codebase without manual intervention.</p>
-
-<div class="meta">Last updated: July 2026 · Getting Started</div>
+<div class="meta">Last updated: July 2026 · API Reference</div>
 </body>
 </html>

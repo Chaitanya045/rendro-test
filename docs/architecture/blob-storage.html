@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Quickstart Guide — Rendro Docs</title>
+<title>Blob Storage Design — Rendro Docs</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -34,30 +34,19 @@
 </style>
 </head>
 <body>
-<div class="breadcrumb"><a href="../index.html">Home</a> / <a href="../getting-started/">Getting Started</a> / <a href="">Quickstart Guide</a></div>
-<h1>Quickstart Guide</h1>
+<div class="breadcrumb"><a href="../index.html">Home</a> / <a href="../architecture/">Architecture</a> / <a href="">Blob Storage Design</a></div>
+<h1>Blob Storage Design</h1>
 
-<h2>Prerequisites</h2>
-<p>Before you begin, ensure you have <strong>Node.js 18+</strong> installed. Rendro's CLI is built on Node.js and requires no additional runtime dependencies.</p>
-<p>You'll also need a <strong>Google account</strong> to sign in to the Rendro web interface. Authentication is handled via Google OAuth with organization-level isolation.</p>
-<h2>Installation</h2>
-<p>Install the Rendro CLI globally using npm. The CLI is a zero-dependency Node.js script — it downloads instantly and works on any platform.</p>
-<pre><code>npm install -g rendro
+<h2>Storage Layer</h2>
+<p>Rendro uses Cloudflare R2 — an S3-compatible object store with zero egress fees. Documents are stored as raw HTML files organized by organization prefix.</p>
+<p>The key naming convention is <code>&lt;org&gt;/&lt;path&gt;.html</code>. For example, <code>gmail/api/overview.html</code>. This allows straightforward org isolation and path-based access control.</p>
+<h2>Access Control</h2>
+<p>All file operations validate the organization prefix against the authenticated user or API key. Cross-org access is blocked at the API level — files under <code>acme/</code> cannot be accessed with a <code>gmail</code> API key.</p>
+<p>Soft-delete marks files as hidden without removing them from storage. This provides a recovery window and allows direct URL access even after deletion from the tree.</p>
+<h2>Performance</h2>
+<p>Files are streamed directly from R2 to the client via the Worker. For HTML files, the Worker injects the commentor widget script before streaming. This is done in a single pass without buffering the entire file.</p>
+<p>The tree API uses lazy loading with pagination. Each folder expansion triggers a single API call that returns up to 50 entries. Large directories use infinite scroll via continuation tokens.</p>
 
-# Verify installation
-rendro --help</code></pre><h2>First Push</h2>
-<p>Create a <code>docs/</code> directory in your project and add an HTML file. Then push it to your organization:</p>
-<pre><code>mkdir -p docs
-echo "<h1>Hello World</h1>" > docs/index.html
-
-# Set your API key (from the Rendro dashboard)
-export RENDRO_API_KEY=rendro_xxx
-
-# Push!
-rendro push --source ./docs --org my-org</code></pre><h2>Next Steps</h2>
-<p>After your first push, visit the Rendro web interface and sign in with Google. You'll see your organization's docs in the sidebar tree. Click any file to view it, or expand folders to navigate.</p>
-<p>Set up a GitHub Actions workflow to automatically push docs on every commit. This ensures your documentation stays in sync with your codebase without manual intervention.</p>
-
-<div class="meta">Last updated: July 2026 · Getting Started</div>
+<div class="meta">Last updated: July 2026 · Architecture</div>
 </body>
 </html>

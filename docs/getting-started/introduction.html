@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Quickstart Guide — Rendro Docs</title>
+<title>Introduction to Rendro — Rendro Docs</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -34,29 +34,23 @@
 </style>
 </head>
 <body>
-<div class="breadcrumb"><a href="../index.html">Home</a> / <a href="../getting-started/">Getting Started</a> / <a href="">Quickstart Guide</a></div>
-<h1>Quickstart Guide</h1>
+<div class="breadcrumb"><a href="../index.html">Home</a> / <a href="../getting-started/">Getting Started</a> / <a href="">Introduction to Rendro</a></div>
+<h1>Introduction to Rendro</h1>
 
-<h2>Prerequisites</h2>
-<p>Before you begin, ensure you have <strong>Node.js 18+</strong> installed. Rendro's CLI is built on Node.js and requires no additional runtime dependencies.</p>
-<p>You'll also need a <strong>Google account</strong> to sign in to the Rendro web interface. Authentication is handled via Google OAuth with organization-level isolation.</p>
-<h2>Installation</h2>
-<p>Install the Rendro CLI globally using npm. The CLI is a zero-dependency Node.js script — it downloads instantly and works on any platform.</p>
-<pre><code>npm install -g rendro
+<h2>What is Rendro?</h2>
+<p>Rendro is a documentation hosting platform that turns static HTML files into a live, searchable knowledge base. Write docs as plain HTML, push via CLI, and Rendro serves them instantly with a VS Code-style sidebar tree, inline comments, and full-text search.</p>
+<p>Unlike traditional documentation tools that require complex build pipelines or framework lock-in, Rendro works with raw HTML files — no JavaScript frameworks, no static site generators, no configuration files. Just write HTML, push, and read.</p>
+<h2>How It Works</h2>
+<p>Rendro follows a simple pipeline: <strong>Write → Push → Read</strong>. You author your documentation as HTML files in your repository's <code>docs/</code> directory. The Rendro CLI scans your files, computes hashes, and uploads only changed files to blob storage. Your team accesses the live docs through the Rendro web interface.</p>
+<p>The web interface provides a VS Code-style sidebar tree with lazy-loading folders, infinite scroll for large directories, sticky folder headers, and dark mode support. Inline comments allow team members to leave feedback directly on documentation.</p>
+<pre><code># Install the CLI
+npm install -g rendro
 
-# Verify installation
-rendro --help</code></pre><h2>First Push</h2>
-<p>Create a <code>docs/</code> directory in your project and add an HTML file. Then push it to your organization:</p>
-<pre><code>mkdir -p docs
-echo "<h1>Hello World</h1>" > docs/index.html
-
-# Set your API key (from the Rendro dashboard)
-export RENDRO_API_KEY=rendro_xxx
-
-# Push!
-rendro push --source ./docs --org my-org</code></pre><h2>Next Steps</h2>
-<p>After your first push, visit the Rendro web interface and sign in with Google. You'll see your organization's docs in the sidebar tree. Click any file to view it, or expand folders to navigate.</p>
-<p>Set up a GitHub Actions workflow to automatically push docs on every commit. This ensures your documentation stays in sync with your codebase without manual intervention.</p>
+# Push your docs
+rendro push --source ./docs --org my-org</code></pre><h2>Key Concepts</h2>
+<p><strong>Organizations</strong> — Your docs are grouped under an organization slug, typically derived from your email domain. Each org has its own namespace in blob storage.</p>
+<p><strong>API Keys</strong> — Per-organization API keys authenticate CLI operations. Generate one from the web dashboard after creating your org.</p>
+<p><strong>Soft Delete</strong> — Removed files aren't permanently deleted. They're hidden from the tree listing but remain accessible via direct URL, providing a safety net for accidental deletions.</p>
 
 <div class="meta">Last updated: July 2026 · Getting Started</div>
 </body>

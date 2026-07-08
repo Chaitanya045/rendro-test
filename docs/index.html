@@ -1,6 +1,46 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Home</title></head>
-<body><h1>Rendro Test Docs</h1><p>This repo tests the Rendro CLI and CI sync.</p>
-<ul><li><a href="getting-started/quickstart.html">Quickstart</a></li>
-<li><a href="api/overview.html">API Overview</a></li></ul>
-</body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rendro Docs — Home</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #ffffff; --fg: #1a1a2e; --muted: #6b7280; --accent: #2563eb; --border: #e5e7eb; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; color: var(--fg); background: var(--bg); line-height: 1.7; max-width: 900px; margin: 0 auto; padding: 3rem 2rem; }
+  h1 { font-size: 2.5rem; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 0.5rem; }
+  h2 { font-size: 1.5rem; font-weight: 600; margin-top: 2.5rem; margin-bottom: 1rem; }
+  p { margin-bottom: 1.25rem; color: #374151; }
+  .hero { padding: 2rem 0; border-bottom: 1px solid var(--border); margin-bottom: 2rem; }
+  .hero p { font-size: 1.15rem; color: var(--muted); max-width: 600px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.25rem; }
+  .card { border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem; transition: box-shadow 0.15s; }
+  .card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+  .card h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+  .card p { font-size: 0.9rem; color: var(--muted); margin: 0; }
+  .card a { color: var(--accent); text-decoration: none; font-weight: 500; }
+  code { font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 0.875rem; background: #f3f4f6; padding: 2px 6px; border-radius: 4px; }
+  .meta { font-size: 0.8rem; color: var(--muted); margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+</style>
+</head>
+<body>
+<div class="hero">
+<h1>Rendro Documentation</h1>
+<p>Everything you need to build, deploy, and maintain documentation with Rendro — from getting started to advanced API integration.</p>
+</div>
 
+<h2>Sections</h2>
+<div class="grid">
+  <div class="card"><h3>🚀 <a href="getting-started/introduction.html">Getting Started</a></h3><p>Installation, quickstart, and configuration</p></div>
+  <div class="card"><h3>🏗️ <a href="architecture/overview.html">Architecture</a></h3><p>System design, data flow, and component internals</p></div>
+  <div class="card"><h3>📚 <a href="api-reference/authentication.html">API Reference</a></h3><p>REST API endpoints, authentication, and error handling</p></div>
+  <div class="card"><h3>📖 <a href="guides/migration.html">Guides</a></h3><p>Migration, CI/CD setup, custom domains, and styling</p></div>
+  <div class="card"><h3>📋 <a href="reference/cli-commands.html">Reference</a></h3><p>CLI commands, glossary, and FAQ</p></div>
+  <div class="card"><h3>🎓 <a href="tutorials/first-doc-site.html">Tutorials</a></h3><p>Step-by-step guides for common workflows</p></div>
+</div>
+
+<div class="meta">Last updated: July 2026 · Rendro Docs</div>
+</body>
+</html>
