@@ -20,27 +20,22 @@ jobs:
         run: |
           set -euo pipefail
 
-          ENDPOINT="${RENRO_ENDPOINT:-https://rendro.app}"
-          ORG="${RENRO_ORG:?RENRO_ORG is required}"
+          ENDPOINT="${RENDRO_ENDPOINT:-https://rendro.app}"
+          ORG="${RENDRO_ORG:?RENDRO_ORG is required}"
           DOCS_DIR="${1:-./docs}"
 
           echo "→ Syncing $DOCS_DIR to $ENDPOINT (org: $ORG)"
 
-          # Verify API key and get authorized org
-          AUTH_ORG=$(curl -sf "$ENDPOINT/api/sync/list" \
-            -H "Authorization: Bearer $RENRO_API_KEY" \
-            | python3 -c "import sys; print('ok')" 2>/dev/null || echo "fail")
-
-          if [ "$AUTH_ORG" != "ok" ]; then
-            echo "✗ API key invalid or unauthorized"
-            exit 1
-          fi
+          # Verify API key
+          curl -sf "$ENDPOINT/api/sync/list" \
+            -H "Authorization: Bearer $RENDRO_API_KEY" > /dev/null \
+            || { echo "✗ API key invalid"; exit 1; }
 
           echo "✓ API key valid"
 
           # Get existing files from server
           EXISTING=$(curl -sf "$ENDPOINT/api/sync/list" \
-            -H "Authorization: Bearer $RENRO_API_KEY" \
+            -H "Authorization: Bearer $RENDRO_API_KEY" \
             | python3 -c "import json,sys; d=json.load(sys.stdin); print('\n'.join(d.get('keys',[])))" 2>/dev/null || echo "")
 
           UPLOADED=0
@@ -49,16 +44,13 @@ jobs:
           # Walk docs directory and upload each .html file
           while IFS= read -r file; do
             [ -z "$file" ] && continue
-            # Convert local path to R2 key: docs/index.html → gmail/index.html
             rel="${file#$DOCS_DIR/}"
             key="$ORG/$rel"
 
-            # Hash for comparison
             hash=$(md5sum "$file" | cut -d' ' -f1)
 
-            # Check if file exists on server with same hash
             check=$(curl -sf "$ENDPOINT/api/sync/check?key=$key&hash=$hash" \
-              -H "Authorization: Bearer $RENRO_API_KEY" 2>/dev/null || echo '{"exists":false}')
+              -H "Authorization: Bearer $RENDRO_API_KEY" 2>/dev/null || echo '{"exists":false}')
 
             match=$(echo "$check" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('match', False))" 2>/dev/null || echo "False")
 
@@ -67,10 +59,9 @@ jobs:
               continue
             fi
 
-            # Upload
             content=$(cat "$file")
             curl -sf "$ENDPOINT/api/sync/upload" \
-              -H "Authorization: Bearer $RENRO_API_KEY" \
+              -H "Authorization: Bearer $RENDRO_API_KEY" \
               -H "Content-Type: application/json" \
               -d "{\"key\": \"$key\", \"content\": $(echo "$content" | python3 -c "import json,sys; print(json.dumps(sys.stdin.read()))")}" \
               > /dev/null
@@ -87,7 +78,7 @@ jobs:
               rel="${server_key#$ORG/}"
               if [ ! -f "$DOCS_DIR/$rel" ]; then
                 curl -sf -X DELETE "$ENDPOINT/api/sync/delete?key=$server_key" \
-                  -H "Authorization: Bearer $RENRO_API_KEY" > /dev/null 2>&1
+                  -H "Authorization: Bearer $RENDRO_API_KEY" > /dev/null 2>&1
                 echo "  ✗ $rel (deleted)"
                 DELETED=$((DELETED + 1))
               fi
