@@ -15,7 +15,7 @@ jobs:
       - name: Sync docs to Rendro
         env:
           RENDRO_API_KEY: ${{ secrets.RENDRO_API_KEY }}
-          RENDRO_ENDPOINT: https://rendro.app
+          RENDRO_ENDPOINT: https://dev.rendro.app
           RENDRO_ORG: gmail
         run: |
           set -euo pipefail
