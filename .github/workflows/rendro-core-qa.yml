@@ -1,0 +1,27 @@
+name: Rendro dev core E2E QA
+on:
+  push:
+    branches: [qa/core-e2e-20261010-1a2dcfdc]
+permissions:
+  contents: read
+concurrency:
+  group: rendro-core-qa-1a2dcfdc
+  cancel-in-progress: false
+jobs:
+  deploy-dev:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+      - name: Fetch verified Rendro CLI
+        run: |
+          curl --fail --silent --show-error --location https://raw.githubusercontent.com/Chaitanya045/rendro/7701007acdf60402eeeec03e20cec8c3c7dfb302/bin/rendro.mjs --output "$RUNNER_TEMP/rendro.mjs"
+          printf '%s  %s\n' '99a10712fae6fe93051ef08de73fcc5f85f3077657eb1a209c67dcd26b2e474e' "$RUNNER_TEMP/rendro.mjs" | sha256sum --check
+      - name: Deploy docs to isolated dev QA project
+        env:
+          RENDRO_API_KEY: ${{ secrets.RENDRO_DEV_QA_CORE_1A2DCFDC }}
+        run: |
+          node "$RUNNER_TEMP/rendro.mjs" push --source ./docs --organization kn71bm0gq4dnay35m8dxkfq86s8g1ad2 --project k97abd9pan3hmpzqrzsjf5wc1s8g1rwq --endpoint https://dev.rendro.app
