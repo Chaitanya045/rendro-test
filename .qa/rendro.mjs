@@ -5,6 +5,11 @@ import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { extname, join, relative, resolve } from "node:path";
+
+// shared/deployment-limits.ts
+var MAX_REUSED_FILES_PER_REQUEST = 16;
+
+// cli/src/_index.ts
 function sha256(content) {
   return createHash("sha256").update(content).digest("hex");
 }
@@ -207,8 +212,8 @@ async function push(opts) {
   const encodedDeploymentId = encodeURIComponent(deploymentId);
   try {
     if (unchanged.length > 0) {
-      for (let start = 0; start < unchanged.length; start += 1e3) {
-        const paths = unchanged.slice(start, start + 1e3).map((entry) => entry.path);
+      for (let start = 0; start < unchanged.length; start += MAX_REUSED_FILES_PER_REQUEST) {
+        const paths = unchanged.slice(start, start + MAX_REUSED_FILES_PER_REQUEST).map((entry) => entry.path);
         await requestJson(
           `${cleanEndpoint}/api/rendro/deployments/${encodedDeploymentId}/copy?${deploymentQuery}`,
           token,

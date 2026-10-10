@@ -18,7 +18,7 @@ jobs:
           node-version: '22'
       - name: Verify Rendro CLI artifact
         run: |
-          printf '%s  %s\n' '99a10712fae6fe93051ef08de73fcc5f85f3077657eb1a209c67dcd26b2e474e' '.qa/rendro.mjs' | sha256sum --check
+          printf '%s  %s\n' 'ca501ca70fd2f7618f0c10f693fda2bc7bec602fab83995a20be1f7a86afac8f' '.qa/rendro.mjs' | sha256sum --check
       - name: Deploy docs to isolated dev QA project
         env:
           RENDRO_API_KEY: ${{ secrets.RENDRO_DEV_QA_CORE_1A2DCFDC }}
